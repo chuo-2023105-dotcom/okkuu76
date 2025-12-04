@@ -2,24 +2,25 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>移動キャラゲーム（学習用）</title>
-<meta name="description" content="学校の自主学習用として作成したJavaScript基礎練習ページです。">
+<title>JavaScript学習用：キャラ移動デモ & コード解説</title>
+<meta name="description" content="HTML / CSS / JavaScript の基本的なDOM操作とイベント処理を学ぶための自主学習ページ。">
 <style>
   body {
     background: #eee;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 40px;
+    margin-top: 20px;
     font-family: sans-serif;
+    line-height: 1.6;
   }
 
-  #info {
-    width: 400px;
-    margin-bottom: 20px;
+  #content {
+    width: 700px;
     background: #fff;
-    padding: 10px;
+    padding: 20px;
     border: 1px solid #aaa;
+    margin-bottom: 20px;
   }
 
   #game-area {
@@ -28,6 +29,7 @@
     background: white;
     border: 2px solid #333;
     position: relative;
+    margin-bottom: 20px;
   }
 
   .sprite {
@@ -35,23 +37,111 @@
     height: 40px;
     position: absolute;
   }
+
+  pre {
+    background: #f7f7f7;
+    padding: 15px;
+    border: 1px solid #ccc;
+    overflow-x: auto;
+  }
 </style>
 </head>
 <body>
 
-<div id="info">
-  <h2>移動キャラゲーム（学習用）</h2>
-  <p>これは学校の自主学習用として作成した、HTML/CSS/JavaScript の基礎練習ページです。</p>
-  <p>キーボードの矢印キーでキャラクターを動かすシンプルな動作確認用デモです。</p>
+<div id="content">
+  <h1>JavaScript基礎学習：キャラクター移動と当たり判定</h1>
+
+  <p>
+    このページは、HTML / CSS / JavaScript の基礎を学ぶための自主学習用資料です。  
+    プレイヤーキャラを矢印キーで移動させ、敵キャラに接触するとアラートが出るという簡単なサンプルです。
+  </p>
+
+  <h2>デモ（キャラクター移動）</h2>
+  <p>矢印キーでプレイヤーを動かしてみよう。</p>
 </div>
 
+<!-- --- ここがゲーム本体の表示領域 --- -->
 <div id="game-area">
   <img id="player" class="sprite" src="images/player.png" style="left: 40px; top: 40px;">
   <img id="enemy" class="sprite" src="images/enemy.png" style="left: 280px; top: 280px;">
 </div>
 
-<!-- 外部スクリプト化（安全性向上のため） -->
+<!-- ゲーム実行用コード -->
 <script src="game.js"></script>
+
+<div id="content">
+  <h2>ゲーム内部コード（JavaScript）</h2>
+  <p>以下は実際に動いている <code>game.js</code> の内容です。</p>
+
+  <pre><code>
+// === game.js ===
+
+const player = document.getElementById("player");
+const enemy  = document.getElementById("enemy");
+const area   = document.getElementById("game-area");
+
+let step = 40; 
+let enemyDX = step;
+
+// プレイヤー移動
+document.addEventListener("keydown", (e) => {
+  const x = player.offsetLeft;
+  const y = player.offsetTop;
+
+  if (e.key === "ArrowUp")    movePlayer(x, y - step);
+  if (e.key === "ArrowDown")  movePlayer(x, y + step);
+  if (e.key === "ArrowLeft")  movePlayer(x - step, y);
+  if (e.key === "ArrowRight") movePlayer(x + step, y);
+});
+
+function movePlayer(nx, ny) {
+  if (nx < 0 || ny < 0) return;
+  if (nx > area.clientWidth - 40) return;
+  if (ny > area.clientHeight - 40) return;
+
+  player.style.left = nx + "px";
+  player.style.top  = ny + "px";
+
+  checkHit();
+}
+
+// 敵キャラ自動移動
+function moveEnemy() {
+  let x = enemy.offsetLeft;
+  x += enemyDX;
+
+  if (x < 0 || x > area.clientWidth - 40) {
+    enemyDX = -enemyDX;
+  }
+
+  enemy.style.left = x + "px";
+  checkHit();
+}
+
+// 当たり判定
+function checkHit() {
+  let px = player.offsetLeft;
+  let py = player.offsetTop;
+  let ex = enemy.offsetLeft;
+  let ey = enemy.offsetTop;
+
+  if (px === ex && py === ey) {
+    alert("敵に当たった！");
+  }
+}
+
+setInterval(moveEnemy, 400);
+  </code></pre>
+
+  <h2>学習ポイントまとめ</h2>
+  <ul>
+    <li><strong>DOM操作</strong>：画像の座標を left / top で変更</li>
+    <li><strong>イベント処理</strong>：keydown を使った入力取得</li>
+    <li><strong>setInterval</strong> による繰り返し処理</li>
+    <li>簡易的な「接触判定」</li>
+  </ul>
+
+</div>
 
 </body>
 </html>
