@@ -2,13 +2,24 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>移動キャラゲーム</title>
+<title>移動キャラゲーム（学習用）</title>
+<meta name="description" content="学校の自主学習用として作成したJavaScript基礎練習ページです。">
 <style>
   body {
     background: #eee;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     margin-top: 40px;
+    font-family: sans-serif;
+  }
+
+  #info {
+    width: 400px;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 10px;
+    border: 1px solid #aaa;
   }
 
   #game-area {
@@ -28,68 +39,19 @@
 </head>
 <body>
 
+<div id="info">
+  <h2>移動キャラゲーム（学習用）</h2>
+  <p>これは学校の自主学習用として作成した、HTML/CSS/JavaScript の基礎練習ページです。</p>
+  <p>キーボードの矢印キーでキャラクターを動かすシンプルな動作確認用デモです。</p>
+</div>
+
 <div id="game-area">
   <img id="player" class="sprite" src="images/player.png" style="left: 40px; top: 40px;">
   <img id="enemy" class="sprite" src="images/enemy.png" style="left: 280px; top: 280px;">
 </div>
 
-<script>
-  const player = document.getElementById("player");
-  const enemy  = document.getElementById("enemy");
-  const area   = document.getElementById("game-area");
-
-  let step = 40; // カクカク移動の幅
-  let enemyDX = step;
-
-  // プレイヤー移動
-  document.addEventListener("keydown", (e) => {
-    const x = player.offsetLeft;
-    const y = player.offsetTop;
-
-    if (e.key === "ArrowUp")    movePlayer(x, y - step);
-    if (e.key === "ArrowDown")  movePlayer(x, y + step);
-    if (e.key === "ArrowLeft")  movePlayer(x - step, y);
-    if (e.key === "ArrowRight") movePlayer(x + step, y);
-  });
-
-  function movePlayer(nx, ny) {
-    if (nx < 0 || ny < 0) return;
-    if (nx > area.clientWidth - 40) return;
-    if (ny > area.clientHeight - 40) return;
-
-    player.style.left = nx + "px";
-    player.style.top  = ny + "px";
-
-    checkHit();
-  }
-
-  // 敵キャラ自動移動（左右に往復）
-  function moveEnemy() {
-    let x = enemy.offsetLeft;
-    x += enemyDX;
-
-    if (x < 0 || x > area.clientWidth - 40) {
-      enemyDX = -enemyDX;
-    }
-
-    enemy.style.left = x + "px";
-    checkHit();
-  }
-
-  // 当たり判定
-  function checkHit() {
-    let px = player.offsetLeft;
-    let py = player.offsetTop;
-    let ex = enemy.offsetLeft;
-    let ey = enemy.offsetTop;
-
-    if (px === ex && py === ey) {
-      alert("敵に当たった！");
-    }
-  }
-
-  setInterval(moveEnemy, 400); // 敵の移動速度
-</script>
+<!-- 外部スクリプト化（安全性向上のため） -->
+<script src="game.js"></script>
 
 </body>
 </html>
